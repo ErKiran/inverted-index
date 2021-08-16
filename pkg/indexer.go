@@ -2,13 +2,13 @@ package pkg
 
 import (
 	"log"
+	"os"
 	"time"
 )
 
-const path = "enwiki-latest-abstract1.xml"
-
 func Indexer() ([]Document, Index, error) {
 	start := time.Now()
+	path := os.Getenv("DOCUMENT_PATH")
 	docs, err := loadDocuments(path)
 	if err != nil {
 		log.Fatal(err)

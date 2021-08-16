@@ -39,10 +39,15 @@ var indexerCmd = &cobra.Command{
 }
 
 var searchCmd = &cobra.Command{
-	Use:   "retriver",
-	Short: "Search the Build Inverted Index",
-	Long:  `Parse the Document and Build the Inverted Index`,
+	Use:     "retriever ",
+	Short:   "Search the Build Inverted Index",
+	Long:    `Parse the Document and Build the Inverted Index`,
+	Example: "retriever Williamson",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please Enter the Query")
+			return
+		}
 		if _, err := os.Stat(indexFileName); os.IsNotExist(err) {
 			fmt.Println("Index file does not exist....")
 			fmt.Println("Please run with indexer flag")

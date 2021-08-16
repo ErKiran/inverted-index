@@ -1,33 +1,39 @@
 package pkg
 
 import (
-	"encoding/xml"
+	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
+	"path/filepath"
 )
 
 type Document struct {
-	Title string `xml:"title"`
-	URL   string `xml:"url"`
-	Text  string `xml:"abstract"`
-	ID    int
+	Text string
+	ID   int
 }
 
 func loadDocuments(path string) ([]Document, error) {
-	f, err := os.Open(path)
+	var docs []Document
+	err := filepath.Walk(path,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			b, err := ioutil.ReadFile(path) // just pass the file name
+			if err != nil {
+				fmt.Print(err)
+			}
+			str := string(b) // convert content to a 'string'
+			docs = append(docs, Document{Text: str})
+
+			return nil
+		})
 	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	dec := xml.NewDecoder(f)
-	dump := struct {
-		Documents []Document `xml:"doc"`
-	}{}
-	if err := dec.Decode(&dump); err != nil {
-		return nil, err
+		log.Println(err)
 	}
 
-	docs := dump.Documents
 	for i := range docs {
 		docs[i].ID = i
 	}
